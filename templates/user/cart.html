@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keranjang Belanja</title>
+</head>
+<body>
+
+<h2>Keranjang Belanja</h2>
+
+{% for item in carts %}
+<div style="border:1px solid #ccc;padding:10px;margin:10px;">
+    <h3>{{ item.product.name }}</h3>
+    <p>Harga: Rp {{ item.product.price }}</p>
+    <p>Jumlah: {{ item.quantity }}</p>
+</div>
+{% endfor %}
+
+<h2>Total: Rp {{ total }}</h2>
+
+<a href="/dashboard">
+    <button>Kembali Belanja</button>
+</a>
+
+</body>
+</html>
