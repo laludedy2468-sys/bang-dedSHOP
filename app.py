@@ -140,9 +140,7 @@ def admin():
     )
 
 =====================
-
 DATA USER
-
 =====================
 
 @app.route("/admin/users")
@@ -160,9 +158,7 @@ return render_template(
 )
 
 =====================
-
 HAPUS USER
-
 =====================
 
 @app.route("/delete-user/"int:id" (int:id)")
@@ -184,9 +180,7 @@ db.session.commit()
 return redirect("/admin/users")
 
 =====================
-
 LAPORAN
-
 =====================
 
 @app.route("/admin/reports")
@@ -208,9 +202,7 @@ return render_template(
 )
 
 =====================
-
 PENGATURAN
-
 =====================
 
 @app.route("/admin/settings")
