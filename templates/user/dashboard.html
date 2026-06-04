@@ -1,148 +1,169 @@
-<!DOCTYPE html>
-<html lang="id">
-
+<!DOCTYPE html><html lang="id">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Bang-DedSHOP</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><style>
 
-<title>Bang-DedSHOP</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
 body{
-background:#f4f6f9;
+background:#f1f5f9;
+font-family:'Segoe UI',sans-serif;
 }
+
+/* NAVBAR */
+
+.navbar{
+background:#0f172a;
+padding:15px 0;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+.navbar-brand{
+font-size:28px;
+font-weight:700;
+color:white !important;
+}
+
+.logout-btn{
+border-radius:12px;
+padding:10px 20px;
+font-weight:600;
+}
+
+/* HERO */
 
 .hero{
 background:linear-gradient(135deg,#2563eb,#06b6d4);
+padding:60px 40px;
+border-radius:25px;
 color:white;
-padding:50px;
-border-radius:20px;
+overflow:hidden;
+position:relative;
+box-shadow:0 15px 30px rgba(0,0,0,.15);
 }
+
+.hero h1{
+font-size:3rem;
+font-weight:700;
+}
+
+.hero p{
+font-size:1.2rem;
+opacity:.9;
+}
+
+.hero::after{
+content:'🛒';
+position:absolute;
+right:30px;
+top:20px;
+font-size:120px;
+opacity:.2;
+}
+
+/* SECTION */
+
+.section-title{
+font-size:35px;
+font-weight:700;
+margin-bottom:30px;
+color:#0f172a;
+}
+
+/* CARD */
 
 .product-card{
 border:none;
-border-radius:20px;
+border-radius:25px;
+overflow:hidden;
+background:white;
 transition:.3s;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
 }
 
 .product-card:hover{
-transform:translateY(-8px);
+transform:translateY(-10px);
+box-shadow:0 15px 35px rgba(0,0,0,.15);
 }
 
-</style>
+.product-card img{
+height:260px;
+object-fit:cover;
+}
 
-</head>
+.card-body{
+padding:20px;
+}
 
-<body>
+.product-name{
+font-size:24px;
+font-weight:700;
+}
 
-<nav class="navbar navbar-dark bg-dark">
+.stock{
+background:#dcfce7;
+color:#15803d;
+padding:6px 12px;
+border-radius:10px;
+display:inline-block;
+font-weight:600;
+margin-bottom:10px;
+}
 
-<div class="container">
+.price{
+font-size:30px;
+font-weight:700;
+color:#16a34a;
+}
 
-<a class="navbar-brand">
+.buy-btn{
+border-radius:15px;
+padding:12px;
+font-size:18px;
+font-weight:600;
+}
 
+/* FOOTER */
+
+footer{
+background:#0f172a;
+margin-top:80px;
+padding:30px;
+color:white;
+}
+
+footer h5{
+font-size:24px;
+font-weight:700;
+}
+
+</style></head><body><nav class="navbar navbar-expand-lg navbar-dark"><div class="container"><a class="navbar-brand">
 🛒 Bang-DedSHOP
-
-</a>
-
-<a href="/logout" class="btn btn-danger">
-
+</a><a href="/logout" class="btn btn-danger logout-btn">
 Logout
+</a></div></nav><div class="container mt-5"><div class="hero"><h1>Selamat Datang di Bang-DedSHOP 🚀</h1><p>
+Belanja Online Mudah, Cepat dan Aman Dengan Harga Terbaik
+</p></div><h2 class="section-title mt-5">
+🔥 Produk Terbaru
+</h2><div class="row">{% for p in products %}
 
-</a>
-
-</div>
-
-</nav>
-
-<div class="container mt-4">
-
-<div class="hero shadow">
-
-<h1>
-
-Selamat Datang di Bang-DedSHOP 🚀
-
-</h1>
-
-<p>
-
-Belanja Online Mudah dan Cepat
-
-</p>
-
-</div>
-
-<h3 class="mt-5 mb-4">
-
-🔥 Produk Tersedia
-
-</h3>
-
-<div class="row">
-
-{% for p in products %}
-
-<div class="col-md-4">
-
-<div class="card product-card shadow mb-4">
-
-<img
-src="{{ url_for('static', filename='uploads/' + p.image) }}"
-class="card-img-top"
-style="height:250px; object-fit:cover;">
-<div class="card-body">
-
-<h5>{{ p.name }}</h5>
-
-<p>
-
+<div class="col-lg-4 col-md-6 mb-4"><div class="card product-card"><img src="{{ url_for('static', filename='uploads/' + p.image) }}"><div class="card-body"><div class="product-name">
+{{ p.name }}
+</div><div class="stock mt-2">
 Stok : {{ p.stock }}
-
-</p>
-
-<h4 class="text-success">
-
+</div><div class="price mt-3">
 Rp {{ p.price }}
+</div><a href="/add-cart/{{p.id}}" class="btn btn-primary buy-btn w-100 mt-3">
+🛒 Beli Sekarang
+</a></div></div></div>{% endfor %}
 
-</h4>
-
-<a href="/add-cart/{{p.id}}" class="btn btn-primary w-100">
-    Beli Sekarang
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-<footer class="bg-dark text-white text-center mt-5 p-4">
-
-<h5>
-
-Bang-DedSHOP
-
-</h5>
-
-<p>
-
+</div></div><footer class="text-center"><h5>Bang-DedSHOP</h5><p>
+Website Toko Online Berbasis Flask
+</p><p>
 © 2026 Universitas Hamzanwadi
-
-</p>
-
-</footer>
-
-</body>
-
+</p></footer></body>
 </html>
