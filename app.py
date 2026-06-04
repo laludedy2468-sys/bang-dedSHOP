@@ -121,9 +121,9 @@ def dashboard():
         products=products
     )
 
-# =====================
+    # =========================
 # ADMIN DASHBOARD
-# =====================
+# =========================
 
 @app.route("/admin")
 @login_required
@@ -139,82 +139,83 @@ def admin():
         products=products
     )
 
-# =====================
+
+# =========================
 # DATA USER
-# =====================
+# =========================
 
 @app.route("/admin/users")
 @login_required
 def admin_users():
 
-if current_user.role != "admin":
-    return redirect("/dashboard")
+    if current_user.role != "admin":
+        return redirect("/dashboard")
 
-users = User.query.all()
+    users = User.query.all()
 
-return render_template(
-    "admin/users.html",
-    users=users
-)
+    return render_template(
+        "admin/users.html",
+        users=users
+    )
 
-# =====================
-# HAPUS USER
-# =====================
 
-@app.route("/delete-user/"int:id" (int:id)")
-@login_required
-def delete_user(id):
-
-if current_user.role != "admin":
-    return redirect("/dashboard")
-
-user = User.query.get_or_404(id)
-
-if user.role == "admin":
-    flash("Admin tidak bisa dihapus")
-    return redirect("/admin/users")
-
-db.session.delete(user)
-db.session.commit()
-
-return redirect("/admin/users")
-
-# =====================
-# LAPORAN
-# =====================
+# =========================
+# REPORTS
+# =========================
 
 @app.route("/admin/reports")
 @login_required
 def admin_reports():
 
-if current_user.role != "admin":
-    return redirect("/dashboard")
+    if current_user.role != "admin":
+        return redirect("/dashboard")
 
-total_user = User.query.count()
-total_produk = Product.query.count()
-total_order = Order.query.count()
+    orders = Order.query.all()
 
-return render_template(
-    "admin/reports.html",
-    total_user=total_user,
-    total_produk=total_produk,
-    total_order=total_order
-)
+    return render_template(
+        "admin/reports.html",
+        orders=orders
+    )
 
-# =====================
-# PENGATURAN
-# =====================
+
+# =========================
+# SETTINGS
+# =========================
 
 @app.route("/admin/settings")
 @login_required
 def admin_settings():
 
-if current_user.role != "admin":
-    return redirect("/dashboard")
+    if current_user.role != "admin":
+        return redirect("/dashboard")
 
-return render_template(
-    "admin/settings.html"
-)    
+    return render_template(
+        "admin/settings.html"
+    )
+
+
+# =========================
+# HAPUS USER
+# =========================
+
+@app.route("/delete-user/<int:id>")
+@login_required
+def delete_user(id):
+
+    if current_user.role != "admin":
+        return redirect("/dashboard")
+
+    user = User.query.get_or_404(id)
+
+    if user.role == "admin":
+        flash("Admin tidak bisa dihapus")
+        return redirect("/admin/users")
+
+    db.session.delete(user)
+    db.session.commit()
+
+    flash("User berhasil dihapus")
+    return redirect("/admin/users")
 
 # =====================
 # CRUD PRODUK
