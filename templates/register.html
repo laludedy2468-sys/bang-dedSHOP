@@ -1,40 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Bang-DedSHOP</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            min-height:100vh;
+            background:linear-gradient(135deg,#0d6efd,#6610f2);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:20px;
+        }
+
+        .register-box{
+            width:100%;
+            max-width:450px;
+            background:white;
+            padding:35px;
+            border-radius:20px;
+            box-shadow:0 15px 40px rgba(0,0,0,.2);
+        }
+
+        .logo{
+            font-size:50px;
+            text-align:center;
+        }
+
+        .title{
+            text-align:center;
+            font-weight:bold;
+            margin-bottom:5px;
+        }
+
+        .subtitle{
+            text-align:center;
+            color:gray;
+            margin-bottom:25px;
+        }
+
+        .form-control{
+            border-radius:12px;
+            padding:12px;
+        }
+
+        .btn-register{
+            width:100%;
+            border-radius:12px;
+            padding:12px;
+            font-weight:bold;
+        }
+
+        .login-link{
+            text-align:center;
+            margin-top:15px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container mt-5">
+<div class="register-box">
 
-<h2>Register</h2>
+    <div class="logo">🛒</div>
 
-<form method="POST">
+    <h2 class="title">Bang-DedSHOP</h2>
 
-    <input
-        type="text"
-        name="username"
-        class="form-control mb-3"
-        placeholder="Username">
+    <p class="subtitle">
+        Buat akun baru untuk mulai berbelanja
+    </p>
 
-    <input
-        type="email"
-        name="email"
-        class="form-control mb-3"
-        placeholder="Email">
+    <form method="POST">
 
-    <input
-        type="password"
-        name="password"
-        class="form-control mb-3"
-        placeholder="Password">
+        <div class="mb-3">
+            <input type="text"
+                   name="username"
+                   class="form-control"
+                   placeholder="Username"
+                   required>
+        </div>
 
-    <button class="btn btn-success">
-        Register
-    </button>
+        <div class="mb-3">
+            <input type="email"
+                   name="email"
+                   class="form-control"
+                   placeholder="Email"
+                   required>
+        </div>
 
-</form>
+        <div class="mb-3">
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Password"
+                   required>
+        </div>
+
+        <button type="submit"
+                class="btn btn-success btn-register">
+            Daftar Sekarang
+        </button>
+
+    </form>
+
+    <div class="login-link">
+        Sudah punya akun?
+        <a href="/login">Login di sini</a>
+    </div>
 
 </div>
 
