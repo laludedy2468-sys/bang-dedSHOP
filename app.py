@@ -139,9 +139,9 @@ def admin():
         products=products
     )
 
-=====================
-DATA USER
-=====================
+# =====================
+# DATA USER
+# =====================
 
 @app.route("/admin/users")
 @login_required
@@ -157,9 +157,9 @@ return render_template(
     users=users
 )
 
-=====================
-HAPUS USER
-=====================
+# =====================
+# HAPUS USER
+# =====================
 
 @app.route("/delete-user/"int:id" (int:id)")
 @login_required
@@ -179,9 +179,9 @@ db.session.commit()
 
 return redirect("/admin/users")
 
-=====================
-LAPORAN
-=====================
+# =====================
+# LAPORAN
+# =====================
 
 @app.route("/admin/reports")
 @login_required
@@ -201,9 +201,9 @@ return render_template(
     total_order=total_order
 )
 
-=====================
-PENGATURAN
-=====================
+# =====================
+# PENGATURAN
+# =====================
 
 @app.route("/admin/settings")
 @login_required
