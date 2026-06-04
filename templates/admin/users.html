@@ -1,0 +1,19 @@
+<h2>Data User</h2><table border="1" width="100%"><tr>
+<th>ID</th>
+<th>Username</th>
+<th>Email</th>
+<th>Role</th>
+<th>Aksi</th>
+</tr>{% for user in users %}
+
+<tr>
+<td>{{ user.id }}</td>
+<td>{{ user.username }}</td>
+<td>{{ user.email }}</td>
+<td>{{ user.role }}</td><td>
+<a href="/delete-user/{{user.id}}">
+Hapus
+</a>
+</td></tr>{% endfor %}
+
+</table>
