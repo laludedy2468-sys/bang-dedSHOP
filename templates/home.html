@@ -8,38 +8,44 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body{
-            background:#f4f6f9;
+        body {
+            background: #f4f6f9;
         }
 
-        .hero{
-            background: linear-gradient(135deg,#0d6efd,#6610f2);
-            color:white;
-            padding:80px 0;
-            text-align:center;
+        .hero {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
         }
 
-        .card{
-            border:none;
-            border-radius:15px;
-            overflow:hidden;
-            transition:0.3s;
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: 0.3s;
         }
 
-        .card:hover{
-            transform:translateY(-8px);
+        .card:hover {
+            transform: translateY(-8px);
         }
 
-        .navbar{
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .footer{
-            background:#212529;
-            color:white;
-            padding:20px;
-            text-align:center;
-            margin-top:50px;
+        .footer {
+            background: #212529;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .product-img {
+            height: 250px;
+            object-fit: cover;
+            background: #e9ecef;
         }
     </style>
 </head>
@@ -51,14 +57,9 @@
             🛒 Bang-DedSHOP
         </a>
 
-        <div>
-            <a href="/login" class="btn btn-primary me-2">
-                Login
-            </a>
-
-            <a href="/register" class="btn btn-success">
-                Register
-            </a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/login" class="btn btn-primary me-2">Login</a>
+            <a href="/register" class="btn btn-success">Register</a>
         </div>
     </div>
 </nav>
@@ -66,13 +67,11 @@
 <section class="hero">
     <div class="container">
         <h1 class="display-4 fw-bold">
-            Selamat Datang di Bang-DedSHOP
+            Selamat Datang di Bang-DedSHOP 🚀
         </h1>
-
         <p class="lead">
             Toko Online Sparepart Motor Terpercaya
         </p>
-
         <a href="#produk" class="btn btn-light btn-lg">
             Lihat Produk
         </a>
@@ -81,47 +80,39 @@
 
 <div class="container py-5" id="produk">
 
-    <h2 class="text-center mb-5">
-        Produk Terbaru
-    </h2>
+    <h2 class="text-center mb-5">🔥 Produk Terbaru</h2>
 
     <div class="row">
-
         {% for product in products %}
         <div class="col-md-4 mb-4">
-
             <div class="card shadow">
 
-                <img src="{{ product.image }}"
-                     class="card-img-top"
-                     style="height:250px;object-fit:cover;">
+                {% if product.image %}
+                <img src="/static/uploads/{{ product.image }}"
+                     class="card-img-top product-img"
+                     alt="{{ product.name }}">
+                {% else %}
+                <div class="product-img d-flex align-items-center justify-content-center bg-secondary">
+                    <span style="font-size:60px">⚙️</span>
+                </div>
+                {% endif %}
 
                 <div class="card-body">
-
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
-
-                    <h4 class="text-success">
-                        Rp {{ product.price }}
+                    <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                    <h4 class="text-success fw-bold">
+                        Rp {{ "{:,}".format(product.price|int).replace(",",".") }}
                     </h4>
+                    <p class="text-muted">Stok: {{ product.stock }}</p>
 
-                    <p>
-                        Stok: {{ product.stock }}
-                    </p>
-
-                    <a href="/cart/{{ product.id }}"
+                    <a href="/add-cart/{{ product.id }}"
                        class="btn btn-primary w-100">
-                       Tambah ke Keranjang
+                        🛒 Tambah ke Keranjang
                     </a>
-
                 </div>
 
             </div>
-
         </div>
         {% endfor %}
-
     </div>
 
 </div>
