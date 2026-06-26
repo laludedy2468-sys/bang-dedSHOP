@@ -1,134 +1,136 @@
-{% extends "base.html" %}
-{% block title %}Checkout – Bang-DedSHOP{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout – Bang-DedSHOP</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  .page-header { display:flex; align-items:center; gap:10px; padding:16px; }
-  .page-header h2 { font-size:18px; font-weight:800; }
-  .steps { display:flex; align-items:center; justify-content:center; padding:0 16px 20px; }
-  .step { display:flex; flex-direction:column; align-items:center; }
-  .step-circle { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
-  .active-circle { background:#2563eb; color:#fff; }
-  .inactive-circle { background:#e2e8f0; color:#94a3b8; }
-  .step-label { font-size:10px; margin-top:3px; font-weight:600; }
-  .step-line { width:40px; height:2px; margin:0 4px 14px; }
-  .card { background:#fff; border-radius:14px; padding:16px; margin:0 12px 12px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-  .card-title { font-weight:700; font-size:14px; margin-bottom:12px; }
-  .field { margin-bottom:12px; }
-  .field label { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px; }
-  .field input, .field textarea { width:100%; border:1.5px solid #e2e8f0; border-radius:10px; padding:10px 12px; font-size:13px; outline:none; font-family:inherit; box-sizing:border-box; }
-  .field input:focus, .field textarea:focus { border-color:#2563eb; }
-  .field textarea { resize:none; }
-  .pay-option { border:2px solid #e2e8f0; border-radius:10px; padding:10px 12px; margin-bottom:8px; cursor:pointer; display:flex; align-items:center; gap:10px; }
-  .pay-icon { font-size:22px; }
-  .pay-label { font-weight:700; font-size:13px; }
-  .pay-desc { font-size:11px; color:#64748b; }
-  .order-row { display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:4px; }
-  .order-total { border-top:1px solid #f1f5f9; margin-top:8px; padding-top:8px; display:flex; justify-content:space-between; font-weight:800; font-size:15px; }
-  .submit-btn { display:block; margin:8px 12px 28px; padding:14px; background:linear-gradient(135deg,#2563eb,#0ea5e9); color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; width:calc(100% - 24px); }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f1f5f9; font-family:'Segoe UI',sans-serif; }
+.navbar { background:#0f172a; padding:15px 0; }
+.navbar-brand { font-size:24px; font-weight:700; color:white !important; text-decoration:none; }
+.card-box { background:white; border-radius:20px; padding:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,.07); }
+.card-title { font-weight:700; font-size:17px; margin-bottom:15px; }
+.field label { display:block; font-size:13px; font-weight:600; color:#475569; margin-bottom:5px; }
+.field input, .field textarea { width:100%; border:1.5px solid #e2e8f0; border-radius:10px; padding:10px 14px; font-size:14px; outline:none; font-family:inherit; box-sizing:border-box; }
+.field input:focus, .field textarea:focus { border-color:#2563eb; }
+.field { margin-bottom:14px; }
+.pay-option { border:2px solid #e2e8f0; border-radius:12px; padding:12px 15px; margin-bottom:10px; cursor:pointer; display:flex; align-items:center; gap:12px; }
+.pay-option input[type=radio] { display:none; }
+.pay-label { font-weight:700; font-size:14px; }
+.pay-desc { font-size:12px; color:#64748b; }
+.order-row { display:flex; justify-content:space-between; font-size:14px; color:#475569; margin-bottom:6px; }
+.order-total { border-top:1px solid #f1f5f9; margin-top:10px; padding-top:10px; display:flex; justify-content:space-between; font-weight:800; font-size:18px; }
+.submit-btn { width:100%; padding:15px; background:linear-gradient(135deg,#2563eb,#0ea5e9); color:white; border:none; border-radius:15px; font-size:17px; font-weight:700; cursor:pointer; margin-top:5px; }
+.flash-error { background:#fee2e2; color:#991b1b; border-radius:10px; padding:10px 16px; margin-bottom:10px; font-weight:600; }
+footer { background:#0f172a; margin-top:60px; padding:25px; color:white; text-align:center; }
 </style>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  function highlight() {
+    function highlight() {
+        document.querySelectorAll(".pay-option").forEach(function (el) {
+            var radio = el.querySelector("input[type=radio]");
+            el.style.borderColor = radio.checked ? "#2563eb" : "#e2e8f0";
+            el.style.background  = radio.checked ? "#eff6ff" : "#fff";
+        });
+    }
     document.querySelectorAll(".pay-option").forEach(function (el) {
-      var radio = el.querySelector("input[type=radio]");
-      el.style.borderColor = radio.checked ? "#2563eb" : "#e2e8f0";
-      el.style.background  = radio.checked ? "#eff6ff" : "#fff";
+        el.addEventListener("click", function () {
+            el.querySelector("input[type=radio]").checked = true;
+            highlight();
+        });
     });
-  }
-  document.querySelectorAll(".pay-option input").forEach(function (r) {
-    r.addEventListener("change", highlight);
-  });
-  document.querySelectorAll(".pay-option").forEach(function (el) {
-    el.addEventListener("click", function () {
-      el.querySelector("input[type=radio]").checked = true;
-      highlight();
-    });
-  });
-  highlight();
+    highlight();
 });
 </script>
+</head>
+<body>
 
-<div class="page-header">
-  <a href="/cart" style="font-size:20px;text-decoration:none">←</a>
-  <h2>📦 Checkout</h2>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">🛒 Bang-DedSHOP</a>
+        <a href="/cart" class="btn btn-outline-light">← Kembali ke Keranjang</a>
+    </div>
+</nav>
+
+<div class="container mt-4" style="max-width:800px">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2 style="font-weight:800;margin-bottom:20px">📦 Checkout</h2>
+
+    <form method="POST" action="/checkout">
+
+        <div class="card-box">
+            <p class="card-title">📍 Data Pengiriman</p>
+            <div class="field">
+                <label>Nama Lengkap</label>
+                <input type="text" name="name" placeholder="Masukkan nama lengkap" value="{{ form.get('name', current_user.username) }}" required>
+            </div>
+            <div class="field">
+                <label>No. HP / WhatsApp</label>
+                <input type="tel" name="phone" placeholder="08xxxxxxxxxx" value="{{ form.get('phone','') }}" required>
+            </div>
+            <div class="field">
+                <label>Alamat Lengkap</label>
+                <textarea name="address" rows="3" placeholder="Jalan, kelurahan, kecamatan, kota..." required>{{ form.get('address','') }}</textarea>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <p class="card-title">💳 Metode Pembayaran</p>
+            {% for val, icon, label, desc in [
+                ("transfer","🏦","Transfer Bank","BCA, BNI, Mandiri, BRI"),
+                ("qris","📱","QRIS","Bayar via aplikasi dompet digital"),
+                ("cod","🏠","COD (Bayar di Tempat)","Bayar saat barang tiba")
+            ] %}
+            <label class="pay-option">
+                <input type="radio" name="payment" value="{{ val }}" {% if (form.get('payment','transfer') == val) %}checked{% endif %}>
+                <span style="font-size:24px">{{ icon }}</span>
+                <div>
+                    <div class="pay-label">{{ label }}</div>
+                    <div class="pay-desc">{{ desc }}</div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="card-box">
+            <p class="card-title">🧾 Ringkasan Pesanan</p>
+            {% for item in carts %}
+            <div class="order-row">
+                <span>{{ item.product.name }} ×{{ item.quantity }}</span>
+                <span>Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</span>
+            </div>
+            {% endfor %}
+            <div class="order-row">
+                <span>Ongkir</span>
+                <span style="color:#16a34a;font-weight:600">Gratis 🎉</span>
+            </div>
+            <div class="order-total">
+                <span>Total</span>
+                <span style="color:#2563eb">Rp {{ "{:,}".format(total).replace(",",".") }}</span>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            🔒 Konfirmasi &amp; Bayar — Rp {{ "{:,}".format(total).replace(",",".") }}
+        </button>
+
+    </form>
 </div>
 
-<!-- Steps -->
-<div class="steps">
-  <div class="step">
-    <div class="step-circle active-circle">1</div>
-    <div class="step-label" style="color:#2563eb">Keranjang</div>
-  </div>
-  <div class="step-line" style="background:#2563eb"></div>
-  <div class="step">
-    <div class="step-circle active-circle">2</div>
-    <div class="step-label" style="color:#2563eb">Checkout</div>
-  </div>
-  <div class="step-line" style="background:#e2e8f0"></div>
-  <div class="step">
-    <div class="step-circle inactive-circle">3</div>
-    <div class="step-label" style="color:#94a3b8">Bayar</div>
-  </div>
-</div>
-
-<form method="POST" action="/checkout">
-
-  <!-- Data Pengiriman -->
-  <div class="card">
-    <p class="card-title">📍 Data Pengiriman</p>
-    <div class="field">
-      <label>Nama Lengkap</label>
-      <input type="text" name="name" placeholder="Masukkan nama lengkap" value="{{ form.get('name', current_user.username) }}" required>
-    </div>
-    <div class="field">
-      <label>No. HP / WhatsApp</label>
-      <input type="tel" name="phone" placeholder="08xxxxxxxxxx" value="{{ form.get('phone','') }}" required>
-    </div>
-    <div class="field">
-      <label>Alamat Lengkap</label>
-      <textarea name="address" rows="3" placeholder="Jalan, kelurahan, kecamatan, kota..." required>{{ form.get('address','') }}</textarea>
-    </div>
-  </div>
-
-  <!-- Metode Pembayaran -->
-  <div class="card">
-    <p class="card-title">💳 Metode Pembayaran</p>
-    {% for val, icon, label, desc in [
-        ("transfer","🏦","Transfer Bank","BCA, BNI, Mandiri, BRI"),
-        ("qris","📱","QRIS","Bayar via aplikasi dompet digital"),
-        ("cod","🏠","COD (Bayar di Tempat)","Bayar saat barang tiba")
-      ] %}
-    <label class="pay-option">
-      <input type="radio" name="payment" value="{{ val }}" {% if (form.get('payment','transfer') == val) %}checked{% endif %}>
-      <span class="pay-icon">{{ icon }}</span>
-      <div>
-        <div class="pay-label">{{ label }}</div>
-        <div class="pay-desc">{{ desc }}</div>
-      </div>
-    </label>
-    {% endfor %}
-  </div>
-
-  <!-- Ringkasan Pesanan -->
-  <div class="card">
-    <p class="card-title">🧾 Ringkasan Pesanan</p>
-    {% for item in carts %}
-    <div class="order-row">
-      <span>{{ item.product.name }} ×{{ item.quantity }}</span>
-      <span>Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</span>
-    </div>
-    {% endfor %}
-    <div class="order-total">
-      <span>Total</span>
-      <span style="color:#2563eb">Rp {{ "{:,}".format(total).replace(",",".") }}</span>
-    </div>
-  </div>
-
-  <button type="submit" class="submit-btn">
-    🔒 Konfirmasi &amp; Bayar — Rp {{ "{:,}".format(total).replace(",",".") }}
-  </button>
-
-</form>
-{% endblock %}
+<footer>
+    <strong>Bang-DedSHOP</strong><br>
+    Website Toko Online Berbasis Flask<br>
+    © 2026 Universitas Hamzanwadi
+</footer>
+</body>
+</html>

@@ -1,95 +1,137 @@
-{% extends "base.html" %}
-{% block title %}Keranjang – Bang-DedSHOP{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keranjang – Bang-DedSHOP</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  .page-header { display:flex; align-items:center; gap:10px; padding:16px; }
-  .page-header h2 { font-size:18px; font-weight:800; }
-  .empty-state { text-align:center; padding:60px 20px; color:#94a3b8; }
-  .empty-state .icon { font-size:60px; margin-bottom:12px; }
-  .cart-item { background:#fff; border-radius:14px; padding:14px; margin:0 12px 10px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; gap:12px; align-items:center; }
-  .item-img { background:#0f172a; border-radius:10px; width:56px; height:56px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; overflow:hidden; }
-  .item-img img { width:100%; height:100%; object-fit:cover; }
-  .item-info { flex:1; }
-  .item-name { font-weight:700; font-size:13px; margin-bottom:2px; }
-  .item-price { color:#16a34a; font-weight:700; font-size:13px; }
-  .qty-wrap { display:flex; align-items:center; gap:8px; margin-top:6px; }
-  .qty-btn { width:28px; height:28px; border-radius:8px; border:1.5px solid #e2e8f0; background:#f8fafc; font-weight:700; cursor:pointer; font-size:16px; }
-  .qty-num { font-weight:700; min-width:20px; text-align:center; }
-  .item-right { text-align:right; }
-  .item-subtotal { font-weight:800; font-size:13px; margin-bottom:8px; }
-  .btn-remove { background:#fef2f2; color:#ef4444; border:none; border-radius:6px; padding:4px 8px; font-size:11px; cursor:pointer; font-weight:600; }
-  .summary-box { background:#fff; border-radius:14px; padding:16px; margin:0 12px 8px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-  .summary-row { display:flex; justify-content:space-between; font-size:13px; color:#64748b; margin-bottom:8px; }
-  .summary-total { border-top:1px solid #f1f5f9; padding-top:10px; display:flex; justify-content:space-between; font-weight:800; font-size:16px; }
-  .free { color:#16a34a; font-weight:600; }
-  .checkout-btn { display:block; margin:8px 12px 24px; padding:14px; background:#2563eb; color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; text-align:center; text-decoration:none; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f1f5f9; font-family:'Segoe UI',sans-serif; }
+.navbar { background:#0f172a; padding:15px 0; box-shadow:0 5px 20px rgba(0,0,0,.15); }
+.navbar-brand { font-size:24px; font-weight:700; color:white !important; text-decoration:none; }
+.cart-item { background:white; border-radius:20px; padding:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,.07); display:flex; align-items:center; gap:15px; }
+.item-img { width:70px; height:70px; border-radius:12px; background:#1e293b; display:flex; align-items:center; justify-content:center; font-size:30px; flex-shrink:0; overflow:hidden; }
+.item-img img { width:100%; height:100%; object-fit:cover; }
+.item-name { font-size:18px; font-weight:700; }
+.item-price { color:#16a34a; font-weight:700; font-size:16px; }
+.item-subtotal { font-weight:800; font-size:16px; }
+.qty-wrap { display:flex; align-items:center; gap:10px; margin-top:8px; }
+.qty-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid #e2e8f0; background:#f8fafc; font-weight:700; cursor:pointer; font-size:18px; }
+.qty-num { font-weight:700; font-size:16px; min-width:24px; text-align:center; }
+.btn-remove { background:#fef2f2; color:#ef4444; border:none; border-radius:8px; padding:5px 12px; font-size:12px; cursor:pointer; font-weight:600; }
+.summary-box { background:white; border-radius:20px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,.07); }
+.summary-row { display:flex; justify-content:space-between; font-size:15px; color:#64748b; margin-bottom:10px; }
+.summary-total { border-top:1px solid #f1f5f9; padding-top:12px; display:flex; justify-content:space-between; font-weight:800; font-size:20px; }
+.checkout-btn { display:block; padding:15px; background:#2563eb; color:white; border:none; border-radius:15px; font-size:17px; font-weight:700; text-align:center; text-decoration:none; margin-top:15px; }
+.empty-state { text-align:center; padding:80px 20px; }
+.flash-success { background:#dcfce7; color:#166534; border-radius:10px; padding:10px 16px; margin-bottom:10px; font-weight:600; }
+.flash-error { background:#fee2e2; color:#991b1b; border-radius:10px; padding:10px 16px; margin-bottom:10px; font-weight:600; }
+footer { background:#0f172a; margin-top:60px; padding:25px; color:white; text-align:center; }
 </style>
+</head>
+<body>
 
-<div class="page-header">
-  <a href="/dashboard" style="font-size:20px;text-decoration:none">←</a>
-  <h2>🛒 Keranjang Belanja</h2>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">🛒 Bang-DedSHOP</a>
+        <div class="d-flex gap-2">
+            <a href="/dashboard" class="btn btn-outline-light">← Lanjut Belanja</a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2 style="font-weight:800;margin-bottom:20px">🛒 Keranjang Belanja</h2>
+
+    {% if not carts %}
+    <div class="empty-state">
+        <div style="font-size:80px;margin-bottom:20px">🛒</div>
+        <h4 style="font-weight:700;color:#475569">Keranjang Kosong</h4>
+        <p style="color:#94a3b8;margin-bottom:20px">Belum ada produk yang ditambahkan</p>
+        <a href="/dashboard" class="btn btn-primary btn-lg">Mulai Belanja</a>
+    </div>
+
+    {% else %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            {% for item in carts %}
+            <div class="cart-item">
+                <div class="item-img">
+                    {% if item.product.image %}
+                    <img src="/static/uploads/{{ item.product.image }}" alt="{{ item.product.name }}">
+                    {% else %}
+                    ⚙️
+                    {% endif %}
+                </div>
+                <div style="flex:1">
+                    <div class="item-name">{{ item.product.name }}</div>
+                    <div class="item-price">Rp {{ "{:,}".format(item.product.price|int).replace(",",".") }}</div>
+                    <div class="qty-wrap">
+                        <form action="/cart/update/{{ item.id }}" method="POST" style="display:inline">
+                            <input type="hidden" name="action" value="minus">
+                            <button class="qty-btn">−</button>
+                        </form>
+                        <span class="qty-num">{{ item.quantity }}</span>
+                        <form action="/cart/update/{{ item.id }}" method="POST" style="display:inline">
+                            <input type="hidden" name="action" value="plus">
+                            <button class="qty-btn">+</button>
+                        </form>
+                    </div>
+                </div>
+                <div style="text-align:right">
+                    <div class="item-subtotal">Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</div>
+                    <form action="/cart/update/{{ item.id }}" method="POST" style="margin-top:8px">
+                        <input type="hidden" name="action" value="remove">
+                        <button class="btn-remove">🗑 Hapus</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="summary-box">
+                <h5 style="font-weight:700;margin-bottom:15px">🧾 Ringkasan</h5>
+                {% for item in carts %}
+                <div class="summary-row">
+                    <span>{{ item.product.name }} ×{{ item.quantity }}</span>
+                    <span>Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</span>
+                </div>
+                {% endfor %}
+                <div class="summary-row">
+                    <span>Ongkir</span>
+                    <span style="color:#16a34a;font-weight:600">Gratis 🎉</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span style="color:#2563eb">Rp {{ "{:,}".format(total).replace(",",".") }}</span>
+                </div>
+                <a href="/checkout" class="checkout-btn">Lanjut ke Checkout →</a>
+                <a href="/cart/clear" class="btn btn-outline-danger w-100 mt-2" onclick="return confirm('Kosongkan keranjang?')">Kosongkan Keranjang</a>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
 </div>
 
-{% if not carts %}
-  <div class="empty-state">
-    <div class="icon">🛒</div>
-    <p style="font-weight:700;font-size:14px;color:#475569">Keranjang Kosong</p>
-    <p style="font-size:13px;margin-bottom:20px">Belum ada produk yang ditambahkan</p>
-    <a href="/dashboard" style="background:#2563eb;color:#fff;border-radius:10px;padding:10px 24px;font-weight:700;text-decoration:none">Mulai Belanja</a>
-  </div>
-{% else %}
+<footer>
+    <strong>Bang-DedSHOP</strong><br>
+    Website Toko Online Berbasis Flask<br>
+    © 2026 Universitas Hamzanwadi
+</footer>
 
-  {% for item in carts %}
-  <div class="cart-item">
-    <div class="item-img">
-      {% if item.product.image %}
-        <img src="/static/uploads/{{ item.product.image }}" alt="{{ item.product.name }}">
-      {% else %}
-        ⚙️
-      {% endif %}
-    </div>
-    <div class="item-info">
-      <p class="item-name">{{ item.product.name }}</p>
-      <p class="item-price">Rp {{ "{:,}".format(item.product.price|int).replace(",",".") }}</p>
-      <div class="qty-wrap">
-        <form action="/cart/update/{{ item.id }}" method="POST" style="display:inline">
-          <input type="hidden" name="action" value="minus">
-          <button class="qty-btn">−</button>
-        </form>
-        <span class="qty-num">{{ item.quantity }}</span>
-        <form action="/cart/update/{{ item.id }}" method="POST" style="display:inline">
-          <input type="hidden" name="action" value="plus">
-          <button class="qty-btn">+</button>
-        </form>
-      </div>
-    </div>
-    <div class="item-right">
-      <p class="item-subtotal">Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</p>
-      <form action="/cart/update/{{ item.id }}" method="POST">
-        <input type="hidden" name="action" value="remove">
-        <button class="btn-remove">Hapus</button>
-      </form>
-    </div>
-  </div>
-  {% endfor %}
-
-  <div class="summary-box">
-    <div class="summary-row">
-      <span>Subtotal</span>
-      <span>Rp {{ "{:,}".format(total).replace(",",".") }}</span>
-    </div>
-    <div class="summary-row">
-      <span>Ongkir</span>
-      <span class="free">Gratis 🎉</span>
-    </div>
-    <div class="summary-total">
-      <span>Total</span>
-      <span style="color:#2563eb">Rp {{ "{:,}".format(total).replace(",",".") }}</span>
-    </div>
-  </div>
-
-  <a href="/checkout" class="checkout-btn">Lanjut ke Checkout →</a>
-
-{% endif %}
-{% endblock %}
+</body>
+</html>
