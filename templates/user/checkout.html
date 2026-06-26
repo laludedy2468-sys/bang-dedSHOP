@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Checkout – Bang-DedSHOP{% endblock %}
+
+{% block content %}
+<style>
+  .page-header { display:flex; align-items:center; gap:10px; padding:16px; }
+  .page-header h2 { font-size:18px; font-weight:800; }
+  .steps { display:flex; align-items:center; justify-content:center; padding:0 16px 20px; }
+  .step { display:flex; flex-direction:column; align-items:center; }
+  .step-circle { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .active-circle { background:#2563eb; color:#fff; }
+  .inactive-circle { background:#e2e8f0; color:#94a3b8; }
+  .step-label { font-size:10px; margin-top:3px; font-weight:600; }
+  .step-line { width:40px; height:2px; margin:0 4px 14px; }
+  .card { background:#fff; border-radius:14px; padding:16px; margin:0 12px 12px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  .card-title { font-weight:700; font-size:14px; margin-bottom:12px; }
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px; }
+  .field input, .field textarea { width:100%; border:1.5px solid #e2e8f0; border-radius:10px; padding:10px 12px; font-size:13px; outline:none; font-family:inherit; box-sizing:border-box; }
+  .field input:focus, .field textarea:focus { border-color:#2563eb; }
+  .field textarea { resize:none; }
+  .pay-option { border:2px solid #e2e8f0; border-radius:10px; padding:10px 12px; margin-bottom:8px; cursor:pointer; display:flex; align-items:center; gap:10px; }
+  .pay-icon { font-size:22px; }
+  .pay-label { font-weight:700; font-size:13px; }
+  .pay-desc { font-size:11px; color:#64748b; }
+  .order-row { display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:4px; }
+  .order-total { border-top:1px solid #f1f5f9; margin-top:8px; padding-top:8px; display:flex; justify-content:space-between; font-weight:800; font-size:15px; }
+  .submit-btn { display:block; margin:8px 12px 28px; padding:14px; background:linear-gradient(135deg,#2563eb,#0ea5e9); color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; width:calc(100% - 24px); }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  function highlight() {
+    document.querySelectorAll(".pay-option").forEach(function (el) {
+      var radio = el.querySelector("input[type=radio]");
+      el.style.borderColor = radio.checked ? "#2563eb" : "#e2e8f0";
+      el.style.background  = radio.checked ? "#eff6ff" : "#fff";
+    });
+  }
+  document.querySelectorAll(".pay-option input").forEach(function (r) {
+    r.addEventListener("change", highlight);
+  });
+  document.querySelectorAll(".pay-option").forEach(function (el) {
+    el.addEventListener("click", function () {
+      el.querySelector("input[type=radio]").checked = true;
+      highlight();
+    });
+  });
+  highlight();
+});
+</script>
+
+<div class="page-header">
+  <a href="/cart" style="font-size:20px;text-decoration:none">←</a>
+  <h2>📦 Checkout</h2>
+</div>
+
+<!-- Steps -->
+<div class="steps">
+  <div class="step">
+    <div class="step-circle active-circle">1</div>
+    <div class="step-label" style="color:#2563eb">Keranjang</div>
+  </div>
+  <div class="step-line" style="background:#2563eb"></div>
+  <div class="step">
+    <div class="step-circle active-circle">2</div>
+    <div class="step-label" style="color:#2563eb">Checkout</div>
+  </div>
+  <div class="step-line" style="background:#e2e8f0"></div>
+  <div class="step">
+    <div class="step-circle inactive-circle">3</div>
+    <div class="step-label" style="color:#94a3b8">Bayar</div>
+  </div>
+</div>
+
+<form method="POST" action="/checkout">
+
+  <!-- Data Pengiriman -->
+  <div class="card">
+    <p class="card-title">📍 Data Pengiriman</p>
+    <div class="field">
+      <label>Nama Lengkap</label>
+      <input type="text" name="name" placeholder="Masukkan nama lengkap" value="{{ form.get('name', current_user.username) }}" required>
+    </div>
+    <div class="field">
+      <label>No. HP / WhatsApp</label>
+      <input type="tel" name="phone" placeholder="08xxxxxxxxxx" value="{{ form.get('phone','') }}" required>
+    </div>
+    <div class="field">
+      <label>Alamat Lengkap</label>
+      <textarea name="address" rows="3" placeholder="Jalan, kelurahan, kecamatan, kota..." required>{{ form.get('address','') }}</textarea>
+    </div>
+  </div>
+
+  <!-- Metode Pembayaran -->
+  <div class="card">
+    <p class="card-title">💳 Metode Pembayaran</p>
+    {% for val, icon, label, desc in [
+        ("transfer","🏦","Transfer Bank","BCA, BNI, Mandiri, BRI"),
+        ("qris","📱","QRIS","Bayar via aplikasi dompet digital"),
+        ("cod","🏠","COD (Bayar di Tempat)","Bayar saat barang tiba")
+      ] %}
+    <label class="pay-option">
+      <input type="radio" name="payment" value="{{ val }}" {% if (form.get('payment','transfer') == val) %}checked{% endif %}>
+      <span class="pay-icon">{{ icon }}</span>
+      <div>
+        <div class="pay-label">{{ label }}</div>
+        <div class="pay-desc">{{ desc }}</div>
+      </div>
+    </label>
+    {% endfor %}
+  </div>
+
+  <!-- Ringkasan Pesanan -->
+  <div class="card">
+    <p class="card-title">🧾 Ringkasan Pesanan</p>
+    {% for item in carts %}
+    <div class="order-row">
+      <span>{{ item.product.name }} ×{{ item.quantity }}</span>
+      <span>Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</span>
+    </div>
+    {% endfor %}
+    <div class="order-total">
+      <span>Total</span>
+      <span style="color:#2563eb">Rp {{ "{:,}".format(total).replace(",",".") }}</span>
+    </div>
+  </div>
+
+  <button type="submit" class="submit-btn">
+    🔒 Konfirmasi &amp; Bayar — Rp {{ "{:,}".format(total).replace(",",".") }}
+  </button>
+
+</form>
+{% endblock %}

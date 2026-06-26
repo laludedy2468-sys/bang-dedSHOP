@@ -1,25 +1,95 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Keranjang Belanja</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Keranjang – Bang-DedSHOP{% endblock %}
 
-<h2>Keranjang Belanja</h2>
+{% block content %}
+<style>
+  .page-header { display:flex; align-items:center; gap:10px; padding:16px; }
+  .page-header h2 { font-size:18px; font-weight:800; }
+  .empty-state { text-align:center; padding:60px 20px; color:#94a3b8; }
+  .empty-state .icon { font-size:60px; margin-bottom:12px; }
+  .cart-item { background:#fff; border-radius:14px; padding:14px; margin:0 12px 10px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; gap:12px; align-items:center; }
+  .item-img { background:#0f172a; border-radius:10px; width:56px; height:56px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; overflow:hidden; }
+  .item-img img { width:100%; height:100%; object-fit:cover; }
+  .item-info { flex:1; }
+  .item-name { font-weight:700; font-size:13px; margin-bottom:2px; }
+  .item-price { color:#16a34a; font-weight:700; font-size:13px; }
+  .qty-wrap { display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .qty-btn { width:28px; height:28px; border-radius:8px; border:1.5px solid #e2e8f0; background:#f8fafc; font-weight:700; cursor:pointer; font-size:16px; }
+  .qty-num { font-weight:700; min-width:20px; text-align:center; }
+  .item-right { text-align:right; }
+  .item-subtotal { font-weight:800; font-size:13px; margin-bottom:8px; }
+  .btn-remove { background:#fef2f2; color:#ef4444; border:none; border-radius:6px; padding:4px 8px; font-size:11px; cursor:pointer; font-weight:600; }
+  .summary-box { background:#fff; border-radius:14px; padding:16px; margin:0 12px 8px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  .summary-row { display:flex; justify-content:space-between; font-size:13px; color:#64748b; margin-bottom:8px; }
+  .summary-total { border-top:1px solid #f1f5f9; padding-top:10px; display:flex; justify-content:space-between; font-weight:800; font-size:16px; }
+  .free { color:#16a34a; font-weight:600; }
+  .checkout-btn { display:block; margin:8px 12px 24px; padding:14px; background:#2563eb; color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; text-align:center; text-decoration:none; }
+</style>
 
-{% for item in carts %}
-<div style="border:1px solid #ccc;padding:10px;margin:10px;">
-    <h3>{{ item.product.name }}</h3>
-    <p>Harga: Rp {{ item.product.price }}</p>
-    <p>Jumlah: {{ item.quantity }}</p>
+<div class="page-header">
+  <a href="/dashboard" style="font-size:20px;text-decoration:none">←</a>
+  <h2>🛒 Keranjang Belanja</h2>
 </div>
-{% endfor %}
 
-<h2>Total: Rp {{ total }}</h2>
+{% if not carts %}
+  <div class="empty-state">
+    <div class="icon">🛒</div>
+    <p style="font-weight:700;font-size:14px;color:#475569">Keranjang Kosong</p>
+    <p style="font-size:13px;margin-bottom:20px">Belum ada produk yang ditambahkan</p>
+    <a href="/dashboard" style="background:#2563eb;color:#fff;border-radius:10px;padding:10px 24px;font-weight:700;text-decoration:none">Mulai Belanja</a>
+  </div>
+{% else %}
 
-<a href="/dashboard">
-    <button>Kembali Belanja</button>
-</a>
+  {% for item in carts %}
+  <div class="cart-item">
+    <div class="item-img">
+      {% if item.product.image %}
+        <img src="/static/uploads/{{ item.product.image }}" alt="{{ item.product.name }}">
+      {% else %}
+        ⚙️
+      {% endif %}
+    </div>
+    <div class="item-info">
+      <p class="item-name">{{ item.product.name }}</p>
+      <p class="item-price">Rp {{ "{:,}".format(item.product.price|int).replace(",",".") }}</p>
+      <div class="qty-wrap">
+        <form action="/cart/update/{{ item.id }}" method="POST" style="display:inline">
+          <input type="hidden" name="action" value="minus">
+          <button class="qty-btn">−</button>
+        </form>
+        <span class="qty-num">{{ item.quantity }}</span>
+        <form action="/cart/update/{{ item.id }}" method="POST" style="display:inline">
+          <input type="hidden" name="action" value="plus">
+          <button class="qty-btn">+</button>
+        </form>
+      </div>
+    </div>
+    <div class="item-right">
+      <p class="item-subtotal">Rp {{ "{:,}".format((item.product.price|int) * item.quantity).replace(",",".") }}</p>
+      <form action="/cart/update/{{ item.id }}" method="POST">
+        <input type="hidden" name="action" value="remove">
+        <button class="btn-remove">Hapus</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
 
-</body>
-</html>
+  <div class="summary-box">
+    <div class="summary-row">
+      <span>Subtotal</span>
+      <span>Rp {{ "{:,}".format(total).replace(",",".") }}</span>
+    </div>
+    <div class="summary-row">
+      <span>Ongkir</span>
+      <span class="free">Gratis 🎉</span>
+    </div>
+    <div class="summary-total">
+      <span>Total</span>
+      <span style="color:#2563eb">Rp {{ "{:,}".format(total).replace(",",".") }}</span>
+    </div>
+  </div>
+
+  <a href="/checkout" class="checkout-btn">Lanjut ke Checkout →</a>
+
+{% endif %}
+{% endblock %}

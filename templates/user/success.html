@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Pesanan Berhasil – Bang-DedSHOP{% endblock %}
+
+{% block content %}
+<style>
+  .success-wrap { padding:40px 16px 24px; text-align:center; }
+  .card { background:#fff; border-radius:14px; padding:16px; margin:0 0 12px; box-shadow:0 2px 8px rgba(0,0,0,.06); text-align:left; }
+  .card-title { font-weight:700; font-size:14px; margin-bottom:12px; }
+  .info-row { display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; }
+  .info-label { color:#64748b; }
+  .transfer-box { background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:14px; padding:16px; margin-bottom:12px; text-align:left; }
+  .qris-box { background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:14px; padding:16px; margin-bottom:12px; text-align:center; }
+  .cod-box { background:#fffbeb; border:1.5px solid #fde68a; border-radius:14px; padding:16px; margin-bottom:12px; text-align:left; font-size:13px; color:#92400e; }
+  .home-btn { display:block; padding:14px; background:#0f172a; color:#fff; border-radius:12px; font-size:15px; font-weight:700; text-align:center; text-decoration:none; margin-bottom:28px; }
+</style>
+
+<div class="success-wrap">
+  <div style="font-size:72px;margin-bottom:16px">✅</div>
+  <p style="font-size:22px;font-weight:800;margin-bottom:8px">Pesanan Berhasil!</p>
+  <p style="color:#64748b;font-size:14px;margin-bottom:24px">Terima kasih telah berbelanja di Bang-DedSHOP</p>
+
+  <!-- Detail Pesanan -->
+  <div class="card">
+    <p class="card-title">Detail Pesanan</p>
+    <div class="info-row">
+      <span class="info-label">No. Pesanan</span>
+      <span style="font-weight:700;color:#2563eb">{{ order.order_number }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Tanggal</span>
+      <span style="font-weight:600">{{ order.created_at }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Nama</span>
+      <span style="font-weight:600">{{ order.name }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">No. HP</span>
+      <span style="font-weight:600">{{ order.phone }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Alamat</span>
+      <span style="font-weight:600;text-align:right;max-width:55%">{{ order.address }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Metode Bayar</span>
+      <span style="font-weight:600">
+        {% if order.payment == "transfer" %}🏦 Transfer Bank
+        {% elif order.payment == "qris" %}📱 QRIS
+        {% else %}🏠 COD{% endif %}
+      </span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Status</span>
+      <span style="background:#fef9c3;color:#ca8a04;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700">Menunggu Pembayaran</span>
+    </div>
+
+    <!-- Item pesanan -->
+    <div style="border-top:1px solid #f1f5f9;margin-top:10px;padding-top:10px">
+      {% for item in order.items %}
+      <div class="info-row">
+        <span style="color:#475569">{{ item.name }} ×{{ item.qty }}</span>
+        <span>Rp {{ "{:,}".format(item.subtotal).replace(",",".") }}</span>
+      </div>
+      {% endfor %}
+      <div class="info-row" style="margin-top:8px;font-weight:800;font-size:15px">
+        <span>Total</span>
+        <span style="color:#2563eb">Rp {{ "{:,}".format(order.total).replace(",",".") }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instruksi Pembayaran -->
+  {% if order.payment == "transfer" %}
+  <div class="transfer-box">
+    <p style="font-weight:700;color:#1d4ed8;font-size:13px;margin-bottom:10px">📋 Instruksi Transfer</p>
+    {% for bank, no in [("BCA","1234567890"),("BNI","9876543210"),("Mandiri","1122334455"),("BRI","0098765432")] %}
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+      <span>{{ bank }}</span>
+      <span><strong>{{ no }}</strong> (a.n. Bang Ded)</span>
+    </div>
+    {% endfor %}
+    <div style="border-top:1px solid #bfdbfe;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-weight:800;font-size:15px;color:#1d4ed8">
+      <span>Transfer Tepat</span>
+      <span>Rp {{ "{:,}".format(order.total).replace(",",".") }}</span>
+    </div>
+    <p style="font-size:11px;color:#3b82f6;margin-top:8px">⚠️ Nominal harus tepat agar pesanan cepat diverifikasi.</p>
+  </div>
+
+  {% elif order.payment == "qris" %}
+  <div class="qris-box">
+    <p style="font-weight:700;color:#15803d;font-size:13px;margin-bottom:10px">📱 Scan QRIS untuk Membayar</p>
+    <div style="background:#fff;border-radius:12px;width:120px;height:120px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#64748b;border:2px dashed #bbf7d0">QR CODE</div>
+    <p style="margin-top:8px;font-size:13px;color:#16a34a;font-weight:700">Rp {{ "{:,}".format(order.total).replace(",",".") }}</p>
+    <p style="font-size:11px;color:#16a34a">Berlaku 15 menit</p>
+  </div>
+
+  {% else %}
+  <div class="cod-box">
+    🏠 Siapkan uang <strong>Rp {{ "{:,}".format(order.total).replace(",",".") }}</strong> saat kurir tiba.<br>
+    Estimasi pengiriman <strong>2–3 hari kerja</strong>.
+  </div>
+  {% endif %}
+
+  <a href="/dashboard" class="home-btn">🏠 Kembali ke Beranda</a>
+</div>
+{% endblock %}
