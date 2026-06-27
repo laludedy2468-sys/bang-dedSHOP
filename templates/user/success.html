@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,13 +10,18 @@
 body { background:#f1f5f9; font-family:'Segoe UI',sans-serif; }
 .navbar { background:#0f172a; padding:15px 0; }
 .navbar-brand { font-size:24px; font-weight:700; color:white !important; text-decoration:none; }
-.card-box { background:white; border-radius:20px; padding:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,.07); }
-.info-row { display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; }
-.info-label { color:#64748b; }
+.card-box { background:white; border-radius:20px; padding:22px; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,.07); }
+.info-row { display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; align-items:flex-start; }
+.info-label { color:#64748b; flex-shrink:0; }
+.info-val { font-weight:600; text-align:right; max-width:60%; }
 .transfer-box { background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:20px; padding:20px; margin-bottom:15px; }
 .qris-box { background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:20px; padding:20px; margin-bottom:15px; text-align:center; }
 .cod-box { background:#fffbeb; border:1.5px solid #fde68a; border-radius:20px; padding:20px; margin-bottom:15px; }
-footer { background:#0f172a; margin-top:60px; padding:25px; color:white; text-align:center; }
+.download-btn { display:block; padding:15px; background:linear-gradient(135deg,#16a34a,#15803d); color:white; border:none; border-radius:15px; font-size:17px; font-weight:700; text-align:center; text-decoration:none; margin-bottom:12px; }
+.download-btn:hover { color:white; opacity:.9; }
+.home-btn { display:block; padding:15px; background:#0f172a; color:white; border-radius:15px; font-size:17px; font-weight:700; text-align:center; text-decoration:none; margin-bottom:30px; }
+.home-btn:hover { color:white; opacity:.9; }
+footer { background:#0f172a; padding:25px; color:white; text-align:center; }
 </style>
 </head>
 <body>
@@ -37,54 +41,60 @@ footer { background:#0f172a; margin-top:60px; padding:25px; color:white; text-al
     </div>
 
     <div class="card-box">
-        <h5 style="font-weight:700;margin-bottom:15px">Detail Pesanan</h5>
+        <h5 style="font-weight:700;margin-bottom:15px">📋 Detail Pesanan</h5>
+
         <div class="info-row">
             <span class="info-label">No. Pesanan</span>
-            <span style="font-weight:700;color:#2563eb">{{ order.order_number }}</span>
+            <span class="info-val" style="color:#2563eb">{{ order['order_number'] }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Tanggal</span>
-            <span style="font-weight:600">{{ order.created_at }}</span>
+            <span class="info-val">{{ order['created_at'] }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Nama</span>
-            <span style="font-weight:600">{{ order.name }}</span>
+            <span class="info-val">{{ order['name'] }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">No. HP</span>
-            <span style="font-weight:600">{{ order.phone }}</span>
+            <span class="info-val">{{ order['phone'] }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Alamat</span>
-            <span style="font-weight:600;text-align:right;max-width:60%">{{ order.address }}</span>
+            <span class="info-val">{{ order['address'] }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Metode Bayar</span>
-            <span style="font-weight:600">
-                {% if order.payment == "transfer" %}🏦 Transfer Bank
-                {% elif order.payment == "qris" %}📱 QRIS
+            <span class="info-val">
+                {% if order['payment'] == "transfer" %}🏦 Transfer Bank
+                {% elif order['payment'] == "qris" %}📱 QRIS
                 {% else %}🏠 COD{% endif %}
             </span>
         </div>
         <div class="info-row">
             <span class="info-label">Status</span>
-            <span style="background:#fef9c3;color:#ca8a04;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700">Menunggu Pembayaran</span>
+            <span style="background:#fef9c3;color:#ca8a04;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700">
+                Menunggu Pembayaran
+            </span>
         </div>
-        <div style="border-top:1px solid #f1f5f9;margin-top:10px;padding-top:10px">
-            {% for item in order.items %}
+
+        <!-- Item Pesanan -->
+        <div style="border-top:1px solid #f1f5f9;margin-top:12px;padding-top:12px">
+            {% for item in order['products'] %}
             <div class="info-row">
-                <span style="color:#475569">{{ item.name }} ×{{ item.qty }}</span>
-                <span>Rp {{ "{:,}".format(item.subtotal).replace(",",".") }}</span>
+                <span style="color:#475569">{{ item['name'] }} ×{{ item['qty'] }}</span>
+                <span>Rp {{ "{:,}".format(item['subtotal']|int).replace(",",".") }}</span>
             </div>
             {% endfor %}
-            <div class="info-row" style="font-weight:800;font-size:18px;margin-top:8px">
+            <div class="info-row" style="font-weight:800;font-size:18px;margin-top:8px;border-top:1px solid #f1f5f9;padding-top:8px">
                 <span>Total</span>
-                <span style="color:#2563eb">Rp {{ "{:,}".format(order.total).replace(",",".") }}</span>
+                <span style="color:#2563eb">Rp {{ "{:,}".format(order['total']|int).replace(",",".") }}</span>
             </div>
         </div>
     </div>
 
-    {% if order.payment == "transfer" %}
+    <!-- Instruksi Pembayaran -->
+    {% if order['payment'] == "transfer" %}
     <div class="transfer-box">
         <h6 style="font-weight:700;color:#1d4ed8;margin-bottom:12px">📋 Instruksi Transfer</h6>
         {% for bank, no in [("BCA","1234567890"),("BNI","9876543210"),("Mandiri","1122334455"),("BRI","0098765432")] %}
@@ -93,29 +103,37 @@ footer { background:#0f172a; margin-top:60px; padding:25px; color:white; text-al
             <span><strong>{{ no }}</strong> (a.n. Bang Ded)</span>
         </div>
         {% endfor %}
-        <div style="border-top:1px solid #bfdbfe;margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;font-weight:800;font-size:18px;color:#1d4ed8">
+        <div style="border-top:1px solid #bfdbfe;margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;font-weight:800;font-size:16px;color:#1d4ed8">
             <span>Transfer Tepat</span>
-            <span>Rp {{ "{:,}".format(order.total).replace(",",".") }}</span>
+            <span>Rp {{ "{:,}".format(order['total']|int).replace(",",".") }}</span>
         </div>
         <p style="font-size:12px;color:#3b82f6;margin-top:8px">⚠️ Nominal harus tepat agar pesanan cepat diverifikasi.</p>
     </div>
 
-    {% elif order.payment == "qris" %}
+    {% elif order['payment'] == "qris" %}
     <div class="qris-box">
         <h6 style="font-weight:700;color:#15803d;margin-bottom:12px">📱 Scan QRIS untuk Membayar</h6>
         <div style="background:white;border-radius:15px;width:130px;height:130px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#64748b;border:2px dashed #bbf7d0">QR CODE</div>
-        <p style="margin-top:10px;font-weight:700;color:#16a34a;font-size:16px">Rp {{ "{:,}".format(order.total).replace(",",".") }}</p>
+        <p style="margin-top:10px;font-weight:700;color:#16a34a;font-size:16px">Rp {{ "{:,}".format(order['total']|int).replace(",",".") }}</p>
         <p style="font-size:12px;color:#16a34a">Berlaku 15 menit</p>
     </div>
 
     {% else %}
     <div class="cod-box">
         <h6 style="font-weight:700;color:#92400e;margin-bottom:8px">🏠 Bayar di Tempat (COD)</h6>
-        <p style="font-size:14px;color:#92400e">Siapkan uang <strong>Rp {{ "{:,}".format(order.total).replace(",",".") }}</strong> saat kurir tiba.<br>Estimasi pengiriman <strong>2–3 hari kerja</strong>.</p>
+        <p style="font-size:14px;color:#92400e">
+            Siapkan uang <strong>Rp {{ "{:,}".format(order['total']|int).replace(",",".") }}</strong> saat kurir tiba.<br>
+            Estimasi pengiriman <strong>2–3 hari kerja</strong>.
+        </p>
     </div>
     {% endif %}
 
-    <a href="/dashboard" class="btn btn-dark w-100 py-3" style="border-radius:15px;font-weight:700;font-size:17px;margin-bottom:30px">
+    <!-- Tombol Download Struk -->
+    <a href="/struk/{{ order['order_id'] }}" class="download-btn">
+        📄 Download Struk PDF
+    </a>
+
+    <a href="/dashboard" class="home-btn">
         🏠 Kembali ke Beranda
     </a>
 

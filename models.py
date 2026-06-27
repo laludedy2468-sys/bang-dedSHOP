@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -22,36 +23,30 @@ class Product(db.Model):
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey("user.id")
-    )
-
-    product_id = db.Column(
-        db.Integer,
-        db.ForeignKey("product.id")
-    )
-
-    quantity = db.Column(
-        db.Integer,
-        default=1
-    )
-
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"))
+    quantity = db.Column(db.Integer, default=1)
     product = db.relationship("Product")
 
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey("user.id")
-    )
-
+    order_number = db.Column(db.String(20))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     total = db.Column(db.Integer)
+    status = db.Column(db.String(50), default="Menunggu")
+    name = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
+    address = db.Column(db.Text)
+    payment = db.Column(db.String(20), default="transfer")
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    items = db.relationship("OrderItem", backref="order")
 
-    status = db.Column(
-        db.String(50),
-        default="Menunggu"
-    )
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id"))
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"))
+    quantity = db.Column(db.Integer)
+    subtotal = db.Column(db.Integer)
+    product = db.relationship("Product")
